@@ -16,6 +16,4 @@ $ ogr2ogr -f GeoJSON -s_srs crs:84 -t_srs crs:84 zip_code_crs84.geojson <input-s
 
 - [ ] integrate [mousewheel-zoom + click-to-center](http://bl.ocks.org/mbostock/2206340) into dc.js viz
 - [ ] add data dimensions to filter
-
-
- 
+- [ ] convert `zip_code_crs84.geojson` to TopoJSON format
