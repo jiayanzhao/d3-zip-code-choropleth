@@ -1,0 +1,17 @@
+{
+  "name": "ca-population-by-zip-code",
+  "version": "1",
+  "authors": [
+    "semerdj <jsemer@gmail.com>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "~3.3.4",
+    "colorbrewer": "~1.0.0",
+    "crossfilter": "~1.3.11",
+    "d3": "~3.5.5",
+    "dc.js": "~1.7.0",
+    "jquery": "~2.1.4"
+  },
+  "main": "/js/main.js"
+}
