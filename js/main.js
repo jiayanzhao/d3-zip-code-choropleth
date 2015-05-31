@@ -1,4 +1,4 @@
-(function chart() {
+// (function chart() {
 
   // var numberFormat = d3.format(".2f");
   var caChart = dc.geoChoroplethChart("#ca-chart");
@@ -15,10 +15,10 @@
       var projection = d3.geo.albersUsa()
           .scale(6000)
           .translate([2300, 680]);
-
+/*
       var width = 1000,
           height = 1200;
-/*
+
       function zoomed() {
           projection
               .translate(d3.event.translate)
@@ -56,4 +56,4 @@
     });
   });
 
-}());
+// }());
