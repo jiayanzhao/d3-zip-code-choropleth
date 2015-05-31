@@ -8,24 +8,51 @@
     var zipcodes = data.dimension(function (d) { return d.zip; });
     var popSum = zipcodes.group().reduceSum(function (d) { return d.population; });
 
-    d3.json("../data/zip_code_crs84.geojson", function (zipGeoJSON) {
+    d3.json("../data/zip_code_crs84.topojson", function (zipTopoJSON) {
+
+      var zipGeoJSON = topojson.feature(zipTopoJSON, zipTopoJSON.objects.zip_code_crs84);
+
+      var projection = d3.geo.albersUsa()
+          .scale(6000)
+          .translate([2300, 680]);
+
+      var width = 1000,
+          height = 1200;
+/*
+      function zoomed() {
+          projection
+              .translate(d3.event.translate)
+              .scale(d3.event.scale);
+          caChart.render();
+      }
+
+      var zoom = d3.behavior.zoom()
+          .translate(projection.translate())
+          .scale(projection.scale())
+          .scaleExtent([height/2, 8 * height])
+          .on("zoom", zoomed);
+
+      var svg = d3.select("#ca-chart")
+          .attr("width", width)
+          .attr("height", height)
+          .call(zoom);
+*/
       caChart.width(1000)
         .height(1200)
         .dimension(zipcodes)
         .group(popSum)
-        .projection(d3.geo.albersUsa()
-            .scale(6000)
-            .translate([2300, 680]))
+        .projection(projection)
         .colors(colorbrewer.RdYlGn[9])
         .colorDomain([0, 100000])
         .overlayGeoJson(zipGeoJSON.features, "zipcode", function (d) {
-            return d.properties.ZCTA5CE10.toString();
+            return d.properties.zipcode.toString();
         })
         .title(function (d) {
             return "Zip: " + d.key + "\nTotal Population: " + d.value; //numberFormat(d.value ? d.value : 0);
         });
 
       dc.renderAll();
+
     });
   });
 

@@ -29,7 +29,6 @@
     "commit": "af788e5620188b056a0925af591ee5c5d2b396da"
   },
   "_source": "git://github.com/NickQiZhu/dc.js.git",
-  "_target": "~1.7.3",
-  "_originalSource": "dc.js",
-  "_direct": true
+  "_target": "~1.7.0",
+  "_originalSource": "dc.js"
 }
