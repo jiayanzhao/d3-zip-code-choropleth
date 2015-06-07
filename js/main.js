@@ -1,59 +1,118 @@
-// (function chart() {
+(function chart() {
 
-  // var numberFormat = d3.format(".2f");
-  var caChart = dc.geoChoroplethChart("#ca-chart");
+  var width = 1000,
+      height = 1200,
+      centered;
 
-  d3.csv("../data/ca_population_2010.csv", function (csv) {
-    var data = crossfilter(csv);
-    var zipcodes = data.dimension(function (d) { return d.zip; });
-    var popSum = zipcodes.group().reduceSum(function (d) { return d.population; });
+  var rateById = d3.map();
 
-    d3.json("../data/zip_code_crs84.topojson", function (zipTopoJSON) {
+  var quantize = d3.scale.quantize()
+      .domain([0, 100000])
+      .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
 
-      var zipGeoJSON = topojson.feature(zipTopoJSON, zipTopoJSON.objects.zip_code_crs84);
+  var projection = d3.geo.albersUsa()
+      .scale(6000)
+      .translate([2300, 680]);
 
-      var projection = d3.geo.albersUsa()
-          .scale(6000)
-          .translate([2300, 680]);
-/*
-      var width = 1000,
-          height = 1200;
+  var path = d3.geo.path()
+      .projection(projection);
 
-      function zoomed() {
-          projection
-              .translate(d3.event.translate)
-              .scale(d3.event.scale);
-          caChart.render();
-      }
+  var svg = d3.select("#ca-chart").append("svg")
+      .attr("width", width)
+      .attr("height", height);
 
-      var zoom = d3.behavior.zoom()
-          .translate(projection.translate())
-          .scale(projection.scale())
-          .scaleExtent([height/2, 8 * height])
-          .on("zoom", zoomed);
+  var tooltip = d3.select("#ca-chart").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
 
-      var svg = d3.select("#ca-chart")
-          .attr("width", width)
-          .attr("height", height)
-          .call(zoom);
-*/
-      caChart.width(1000)
-        .height(1200)
-        .dimension(zipcodes)
-        .group(popSum)
-        .projection(projection)
-        .colors(colorbrewer.RdYlGn[9])
-        .colorDomain([0, 100000])
-        .overlayGeoJson(zipGeoJSON.features, "zipcode", function (d) {
-            return d.properties.zipcode.toString();
-        })
-        .title(function (d) {
-            return "Zip: " + d.key + "\nTotal Population: " + d.value; //numberFormat(d.value ? d.value : 0);
-        });
+  svg.append("rect")
+      .attr("class", "background")
+      .attr("width", width)
+      .attr("height", height)
+      .on("click", clicked);
 
-      dc.renderAll();
+  var g = svg.append("g");
 
-    });
-  });
+  queue()
+      .defer(d3.json, "../data/zip_code_crs84.topojson")
+      .defer(d3.csv, "../data/ca_population_2010.csv", function(d) { rateById.set(d.zip.toString(), +d.population); })
+      .await(ready);
 
-// }());
+  function ready(error, zipcode) {
+    var features = topojson.feature(zipcode, zipcode.objects.zip_code_crs84).features;
+
+    g.append("g")
+        .attr("class", "zipcodes")
+      .selectAll("path")
+        .data(features)
+      .enter().append("path")
+        .attr("class", getColorClass)
+        .attr("d", path)
+        .on("click", clicked)
+        .on("mouseover", mouseover)
+        .on("mouseout", mouseout);
+  }
+
+  function getColorClass(d) {
+    return quantize(rateById.get(d.properties.zipcode));
+  }
+
+  function getPopulation(d) {
+    return rateById.get(getZip(d)).toString();
+  }
+
+  function getZip(d) {
+    return d && d.properties ? d.properties.zipcode : null;
+  }
+
+  function mouseout(d) {
+    d3.select(this)
+        .style("stroke", null);
+
+    tooltip.transition()
+        .duration(250)
+        .style("opacity", 0);
+  }
+
+  function mouseover(d) {
+    d3.select(this.parentNode.appendChild(this))
+        .style("stroke", "#F00");
+
+    tooltip.transition()
+        .duration(250)
+        .style("opacity", 1);
+
+    tooltip
+        .html("<p><strong>Zipcode: " + getZip(d) + "<br>Population: "  + getPopulation(d) + "</strong></p>")
+        .style("left", (d3.event.pageX + 25) + "px")
+        .style("top",  (d3.event.pageY - 28) + "px");
+    }
+
+  function clicked(d) {
+    var x, y, k;
+
+    if (d && centered !== d) {
+      var centroid = path.centroid(d);
+      x = centroid[0];
+      y = centroid[1];
+      k = 8;    // control zoom depth
+      centered = d;
+    } else {
+      x = width / 2;
+      y = height / 2;
+      k = 1;
+      centered = null;
+    }
+
+    g.selectAll("path")
+        .classed("active", centered && function(d) { return d === centered; });
+
+    g.transition()
+        .duration(750)
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+        .style("stroke-width", 1.5 / k + "px");
+  }
+
+  d3.select(self.frameElement).style("height", height + "px");
+
+}());
