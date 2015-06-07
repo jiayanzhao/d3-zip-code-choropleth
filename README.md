@@ -2,6 +2,7 @@
 
 Based on:
 * ~~[US Venture Capital Landscape 2011](http://dc-js.github.io/dc.js/vc/)~~
+* [Choropleth](http://bl.ocks.org/mbostock/4060606)
 * [Map: Tax Statistics](http://bl.ocks.org/dougdowson/10734337)
 * [GeoJson map of Colombia](http://bl.ocks.org/john-guerra/43c7656821069d00dcbc)
 * [D3.js & Crossfilter.js: Brushing Ordinal Scales for Bars & Choropleths](https://nyquist212.wordpress.com/2015/06/05/d3-js-crossfilter-js-brushing-ordinal-scales-for-bars-choropleths/)
