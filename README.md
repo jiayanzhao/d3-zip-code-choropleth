@@ -1,8 +1,13 @@
-# dc.js zip code shapefile example
+# d3 ~~dc.js~~ zip code choropleth
 
-Based on [US Venture Capital Landscape 2011](http://dc-js.github.io/dc.js/vc/).
+Based on:
+* ~~[US Venture Capital Landscape 2011](http://dc-js.github.io/dc.js/vc/)~~
+* [Map: Tax Statistics](http://bl.ocks.org/dougdowson/10734337)
+* [GeoJson map of Colombia](http://bl.ocks.org/john-guerra/43c7656821069d00dcbc)
+* [D3.js & Crossfilter.js: Brushing Ordinal Scales for Bars & Choropleths](https://nyquist212.wordpress.com/2015/06/05/d3-js-crossfilter-js-brushing-ordinal-scales-for-bars-choropleths/)
+* [Hispanic Population by Congressional District](http://media.cq.com/pub/2013/hispanic/)
 
-### Sources
+### Data sources
 
 * CA Population [Data](http://www.dof.ca.gov/research/demographic/state_census_data_center/census_2010/documents/2010Census_DemoProfile1_ZCTA.xls)
 * CA Zip Code [Shapefile](http://geocommons.com/overlays/305142.zip)
@@ -21,6 +26,6 @@ $ topojson -o zip_code_crs84.topojson --properties zipcode=ZCTA5CE10 zip_code_cr
 
 ### Todo
 
-- [ ] integrate [mousewheel-zoom + click-to-center](http://bl.ocks.org/mbostock/2206340) into dc.js viz
+- [x] integrate [mousewheel-zoom + click-to-center](http://bl.ocks.org/mbostock/2206340) into ~~dc.js viz~~ d3 viz
 - [ ] add data dimensions to filter
 - [x] convert `zip_code_crs84.geojson` to TopoJSON format
