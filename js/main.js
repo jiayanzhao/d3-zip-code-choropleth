@@ -21,6 +21,10 @@
       .attr("width", width)
       .attr("height", height);
 
+  var tooltip = d3.select("#ca-chart").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
   svg.append("rect")
       .attr("class", "background")
       .attr("width", width)
@@ -42,54 +46,46 @@
       .selectAll("path")
         .data(features)
       .enter().append("path")
-        .attr("class", function(d) { return quantize(rateById.get(d.properties.zipcode)); })
+        .attr("class", getColorClass)
         .attr("d", path)
         .on("click", clicked)
-        .on("mouseover", function(d) { console.log(quantize(d.properties.population)); })
+        .on("mouseover", mouseover)
         .on("mouseout", mouseout);
+  }
+
+  function getColorClass(d) {
+    return quantize(rateById.get(d.properties.zipcode));
+  }
+
+  function getPopulation(d) {
+    return rateById.get(getZip(d)).toString();
   }
 
   function getZip(d) {
     return d && d.properties ? d.properties.zipcode : null;
   }
 
-  function getColor(d) {
-    return color(d);
-  }
-
   function mouseout(d) {
-    d3.select("#tooltip").remove();
-
     d3.select(this)
-      .transition()
-      .duration(250)
-      .style("fill", function(d) {
-          var population = d.properties.population;
-          if (population) {
-              return color(population);
-          } else {
-              return "#ddd";
-          }
-      });
+        .style("stroke", null);
+
+    tooltip.transition()
+        .duration(250)
+        .style("opacity", 0);
   }
 
   function mouseover(d) {
-    var xPosition = d3.mouse(this)[0];
-    var yPosition = d3.mouse(this)[1] - 30;
+    d3.select(this.parentNode.appendChild(this))
+        .style("stroke", "#F00");
 
-    svg.append("text")
-        .attr("id", "tooltip")
-        .attr("x", xPosition)
-        .attr("y", yPosition)
-        .attr("text-anchor", "middle")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "11px")
-        .attr("font-weight", "bold")
-        .attr("fill", "black")
-        .text(d.properties.population);
+    tooltip.transition()
+        .duration(250)
+        .style("opacity", 1);
 
-    d3.select(this)
-        .style("fill", "#D5708B");
+    tooltip
+        .html("<p><strong>Zipcode: " + getZip(d) + "<br>Population: "  + getPopulation(d) + "</strong></p>")
+        .style("left", (d3.event.pageX + 25) + "px")
+        .style("top",  (d3.event.pageY - 28) + "px");
     }
 
   function clicked(d) {
@@ -99,7 +95,7 @@
       var centroid = path.centroid(d);
       x = centroid[0];
       y = centroid[1];
-      k = 4;
+      k = 8;    // control zoom depth
       centered = d;
     } else {
       x = width / 2;
