@@ -21,7 +21,6 @@
       .attr("width", width)
       .attr("height", height);
 
-
   svg.append("rect")
       .attr("class", "background")
       .attr("width", width)
@@ -36,15 +35,62 @@
       .await(ready);
 
   function ready(error, zipcode) {
+    var features = topojson.feature(zipcode, zipcode.objects.zip_code_crs84).features;
+
     g.append("g")
         .attr("class", "zipcodes")
       .selectAll("path")
-        .data(topojson.feature(zipcode, zipcode.objects.zip_code_crs84).features)
+        .data(features)
       .enter().append("path")
         .attr("class", function(d) { return quantize(rateById.get(d.properties.zipcode)); })
         .attr("d", path)
-        .on("click", clicked);
+        .on("click", clicked)
+        .on("mouseover", function(d) { console.log(quantize(d.properties.population)); })
+        .on("mouseout", mouseout);
   }
+
+  function getZip(d) {
+    return d && d.properties ? d.properties.zipcode : null;
+  }
+
+  function getColor(d) {
+    return color(d);
+  }
+
+  function mouseout(d) {
+    d3.select("#tooltip").remove();
+
+    d3.select(this)
+      .transition()
+      .duration(250)
+      .style("fill", function(d) {
+          var population = d.properties.population;
+          if (population) {
+              return color(population);
+          } else {
+              return "#ddd";
+          }
+      });
+  }
+
+  function mouseover(d) {
+    var xPosition = d3.mouse(this)[0];
+    var yPosition = d3.mouse(this)[1] - 30;
+
+    svg.append("text")
+        .attr("id", "tooltip")
+        .attr("x", xPosition)
+        .attr("y", yPosition)
+        .attr("text-anchor", "middle")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "11px")
+        .attr("font-weight", "bold")
+        .attr("fill", "black")
+        .text(d.properties.population);
+
+    d3.select(this)
+        .style("fill", "#D5708B");
+    }
 
   function clicked(d) {
     var x, y, k;
