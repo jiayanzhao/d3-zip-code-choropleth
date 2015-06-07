@@ -28,5 +28,6 @@ $ topojson -o zip_code_crs84.topojson --properties zipcode=ZCTA5CE10 zip_code_cr
 ### Todo
 
 - [x] integrate [mousewheel-zoom + click-to-center](http://bl.ocks.org/mbostock/2206340) into ~~dc.js viz~~ d3 viz
-- [ ] add data dimensions to filter
 - [x] convert `zip_code_crs84.geojson` to TopoJSON format
+- [ ] add data dimensions to filter
+- [ ] add county shapefile layer
