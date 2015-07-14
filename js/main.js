@@ -34,9 +34,9 @@
   var g = svg.append("g");
 
   queue()
-      .defer(d3.json, "../shapefile/foo.topojson")
+      .defer(d3.json, "../d3-zip-code-choropleth/shapefile/foo.topojson")
       // .defer(d3.json, "../data/zip_code_crs84.topojson")
-      .defer(d3.csv, "../data/ca_population_2010.csv", function(d) { rateById.set(d.zip.toString(), +d.population); })
+      .defer(d3.csv, "../d3-zip-code-choropleth/data/ca_population_2010.csv", function(d) { rateById.set(d.zip.toString(), +d.population); })
       .await(ready);
 
   function ready(error, zipcode) {
