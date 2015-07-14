@@ -34,12 +34,25 @@
   var g = svg.append("g");
 
   queue()
-      .defer(d3.json, "../data/zip_code_crs84.topojson")
+      .defer(d3.json, "../shapefile/foo.topojson")
+      // .defer(d3.json, "../data/zip_code_crs84.topojson")
       .defer(d3.csv, "../data/ca_population_2010.csv", function(d) { rateById.set(d.zip.toString(), +d.population); })
       .await(ready);
 
   function ready(error, zipcode) {
-    var features = topojson.feature(zipcode, zipcode.objects.zip_code_crs84).features;
+    // var features = topojson.feature(zipcode, zipcode.objects.zip_code_crs84).features;
+
+    g.append("g")
+        .attr("class", "state")
+      .selectAll("path")
+        .data(topojson.feature(zipcode, zipcode.objects.state).features)
+      .enter().append("path")
+        .attr("d", path)
+        .attr("stroke", "#333")
+        .attr("stroke-width", "1.5px")
+        .attr("fill", "#fff");
+
+    var features = topojson.feature(zipcode, zipcode.objects.zip).features;
 
     g.append("g")
         .attr("class", "zipcodes")

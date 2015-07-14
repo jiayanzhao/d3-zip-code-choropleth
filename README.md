@@ -11,7 +11,7 @@ Based on:
 ### Data sources
 
 * CA Population [Data](http://www.dof.ca.gov/research/demographic/state_census_data_center/census_2010/documents/2010Census_DemoProfile1_ZCTA.xls)
-* CA Zip Code [Shapefile](http://geocommons.com/overlays/305142.zip)
+* CA Zip Code [Shapefile](http://geocommons.com/overlays/305142.zip), or [US Census](ftp://ftp2.census.gov/geo/pvs/tiger2010st/06_California/06/)
 
 Convert shapefile into geojson format using `ogr2ogr`:
 ```bash
